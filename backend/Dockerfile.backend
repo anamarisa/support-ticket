@@ -1,0 +1,37 @@
+FROM php:8.2-fpm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    unzip \
+    zip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-install pdo pdo_mysql zip
+
+# Set working directory
+WORKDIR /var/www/backend
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy project files
+COPY . .
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/backend \
+    && chmod -R 775 storage bootstrap/cache
+
+# Expose port used by PHP-FPM
+EXPOSE 9000
+
+CMD ["php-fpm"]
