@@ -1,24 +1,49 @@
-Setup and Workflow Instructions
+Sure! Here's a clean and styled version of your setup instructions for a GitHub `README.md` using Markdown:
 
-Backend Setup:
-1. Go to the backend folder and install the required dependencies by running composer install.
-2. Start the Laravel development server by running php artisan serve.
+```md
+## 🚀 Getting Started
 
-Frontend Setup:
-1. Go to the frontend folder and install the necessary dependencies by running npm install.
-2. Start the frontend development server by running npm run dev.
+### 🔧 Backend Setup
+1. Go to the `backend` folder.
+2. Install dependencies:
+   ```bash
+   composer install
+   ```
+3. Start the Laravel development server:
+   ```bash
+   php artisan serve
+   ```
 
-- Initial Setup:
-1. Run php artisan migrate:fresh --seed to refresh the database and seed it with the necessary data.
-2. Login as Admin:
-3. Log in as an admin using the provided credentials from the PDF document.
+### 🎨 Frontend Setup
+1. Go to the `frontend` folder.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
 
-- Vendor Registration:
-Open another tab and go to the vendor registration page to register as a vendor.
+### ⚙️ Initial Setup
+1. Refresh and seed the database:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+2. **Log in as Admin**  
+   Use the credentials provided in the PDF document.
 
-- Vendor Approval Process:
-After registration, the admin can view the vendor in the admin dashboard and approve or reject the vendor.
+---
 
-- Post-Approval Actions:
-If the vendor is approved, they will be automatically redirected to manage their products.
-If the vendor is rejected, the admin will be prompted to log out.
+### 📝 Vendor Registration
+- Open a new browser tab and navigate to the vendor registration page.
+- Fill in the required information to register as a vendor.
+
+### ✅ Vendor Approval Process
+- After registration, the admin can view pending vendors in the dashboard.
+- Admin can **approve** or **reject** the vendor application.
+
+### 📦 Post-Approval Actions
+- **If approved:** Vendor is redirected to manage their products.
+- **If rejected:** Admin is prompted to log out.
+```
