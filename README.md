@@ -1,5 +1,3 @@
-Sure! Here's a clean and styled version of your setup instructions for a GitHub `README.md` using Markdown:
-
 ```md
 ## 🚀 Getting Started
 
