@@ -13,6 +13,11 @@
    php artisan serve
    ```
 
+3. Start the Laravel development server:
+   ```bash
+   php artisan serve
+   ```
+
 ### 🎨 Frontend Setup
 1. Go to the `frontend` folder.
 2. Install dependencies:
