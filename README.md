@@ -4,7 +4,6 @@
 1. Go to the `backend` folder.
 
 2. Install dependencies:
-   ```sm
    ```bash
    composer install
    ```
