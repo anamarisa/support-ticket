@@ -4,9 +4,9 @@
 ### 🔧 Backend Setup
 1. Go to the `backend` folder.
 
-2. Install dependencies:
+3. Start the Laravel development server:
    ```bash
-   composer install
+   php artisan serve
    ```
 3. Start the Laravel development server:
    ```bash
