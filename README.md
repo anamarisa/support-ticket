@@ -1,9 +1,8 @@
-```md
 ## 🚀 Getting Started
 
 ### 🔧 Backend Setup
 1. Go to the `backend` folder.
-
+```md
 2. Install dependencies:
    ```bash
    composer install
