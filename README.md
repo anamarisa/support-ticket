@@ -3,6 +3,7 @@
 
 ### 🔧 Backend Setup
 1. Go to the `backend` folder.
+
 2. Install dependencies:
    ```bash
    composer install
