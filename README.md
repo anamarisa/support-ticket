@@ -8,10 +8,6 @@
    ```bash
    composer install
    ```
-3. Start the Laravel development server:
-   ```bash
-   php artisan serve
-   ```
 
 3. Start the Laravel development server:
    ```bash
