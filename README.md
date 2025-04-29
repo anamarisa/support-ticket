@@ -45,4 +45,3 @@
 ### 📦 Post-Approval Actions
 - **If approved:** Vendor is redirected to manage their products.
 - **If rejected:** Admin is prompted to log out.
-```
