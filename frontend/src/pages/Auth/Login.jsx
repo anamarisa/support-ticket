@@ -1,97 +1,145 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { setAuthToken, setUserData } from "../../utils/auth";
-import { login as loginService } from "../../services/auth";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
-import AuthFormContainer from "../../components/common/Auth/AuthFormContainer";
-import AuthInputField from "../../components/common/Auth/AuthInputField";
-import AuthSubmitButton from "../../components/common/Auth/AuthSubmitButton";
-import AuthFooter from "../../components/common/Auth/AuthFooter";
-import AuthIcon from "../../components/common/Auth/AuthIcon";
+import { useNavigate } from "react-router";
+import { setAuthToken, setUserData } from "../../lib/auth";
+import { login as loginService } from "../../services/authService";
+import brand2 from "../../assets/images/brand1.png";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Link } from "react-router-dom";
+
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+});
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
+  async function onSubmit(values) {
     try {
-      const data = await loginService({ email, password });
-      console.log("Login data:", data);
-
-      setAuthToken(data.token);
-      setUserData({
-        user: data.user,
-        vendor: data.vendor,
+      const response = await loginService(values); // Call your API
+      setAuthToken(response.token);
+      setUserData(response.user);
+      navigate("/"); // redirect after login
+    } catch (error) {
+      console.error("Login failed:", error);
+      form.setError("email", {
+        type: "manual",
+        message: "Invalid credentials.",
       });
-
-      if (data.user.role === "admin") {
-        navigate("/vendor-approval");
-      } else if (data.vendor?.status === "approved") {
-        navigate("/");
-      } else {
-        navigate("/vendor-pending");
-      }
-    } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
-      console.error("Login error details:", err);
-    } finally {
-      setIsSubmitting(false);
     }
-  };
-
-  const lockIcon = (
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-    />
-  );
+  }
 
   return (
-    <AuthFormContainer
-      title="Welcome Back"
-      subtitle="Sign in to your account"
-      icon={<AuthIcon icon={lockIcon} />}
-    >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {error && (
-          <div className="text-red-500 text-sm font-medium">{error}</div>
-        )}
+    <div className="relative min-h-screen bg-white flex flex-col lg:flex-row">
+      <div className="absolute top-9 right-9 z-10">
+        <Link to="/register">
+          <Button variant="secondary">Sign up</Button>
+        </Link>
+      </div>
+      {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
+      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen">
+        <img src={brand2} alt="brand" className="w-full h-full object-cover" />
+      </div>
 
-        <AuthInputField
-          label="Email Address"
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      {/* Form Container */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8">
+        <div className="w-full max-w-[400px]">
+          {/* Form */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-2"
+                >
+                  <h2 className="text-2xl font-bold mb-6">
+                    Login to Leadsensei
+                  </h2>
 
-        <AuthInputField
-          label="Password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          showForgotPassword={true}
-        />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="border-gray-200 rounded-md h-9"
+                            type="email"
+                            placeholder="name@example.com"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-        <AuthSubmitButton isSubmitting={isSubmitting}>Sign In</AuthSubmitButton>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="border-gray-200 rounded-md h-9"
+                            type="password"
+                            placeholder="Password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-        <AuthFooter
-          text="Don't have an account?"
-          linkText="Sign up"
-          linkUrl="/register"
-        />
-      </form>
-    </AuthFormContainer>
+                  <Button
+                    className="w-full mt-2 h-10 bg-[#142946] text-white"
+                    type="submit"
+                  >
+                    Sign In
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p>By clicking continue, you agree to our</p>
+            <p>
+              <a href="#" className="font-medium underline">
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="#" className="font-medium underline">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

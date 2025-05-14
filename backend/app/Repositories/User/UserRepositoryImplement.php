@@ -40,7 +40,6 @@ class UserRepositoryImplement extends Eloquent implements UserRepository
             $user->name = $data['name'];
             $user->email = $data['email'];
             $user->password = $data['password'];
-            $user->role = $data['role'] ?? 'vendor';
 
             $user->save();
 

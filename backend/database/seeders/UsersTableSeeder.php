@@ -20,26 +20,9 @@ class UsersTableSeeder extends Seeder
                 'name' => 'John Doe',
                 'email' => 'john.doe@example.com',
                 'password' => Hash::make('password123'),
-                'role' => 'admin',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
-
-        $vendorUser = User::create([
-            'name' => 'Vendor User',
-            'email' => 'vendor@example.com',
-            'password' => Hash::make('password123'),
-            'role' => 'vendor',
-        ]);
-
-        Vendor::create([
-            'user_id' => $vendorUser->id,
-            'company_name' => 'Vendor Company Ltd.',
-            'address' => '123 Vendor Street',
-            'phone' => '08123456789',
-            'status' => 'approved',
-            'approved_at' => now(),
         ]);
     }
 }

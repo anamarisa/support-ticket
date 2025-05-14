@@ -1,163 +1,181 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { registerVendor } from "../../services/auth";
-import AuthFormContainer from "../../components/common/Auth/AuthFormContainer";
-import AuthInputField from "../../components/common/Auth/AuthInputField";
-import AuthSubmitButton from "../../components/common/Auth/AuthSubmitButton";
-import AuthFooter from "../../components/common/Auth/AuthFooter";
-import AuthIcon from "../../components/common/Auth/AuthIcon";
-import { setAuthToken, setUserData } from "../../utils/auth";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { Link, useNavigate } from "react-router-dom";
+import { register as registerService } from "../../services/authService";
+import { setAuthToken, setUserData } from "@/lib/auth";
+import brand from "../../assets/images/brand.png";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+
+const formSchema = z.object({
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters.",
+  }),
+  email: z.string().email(),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+  password_confirmation: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+});
 
 const RegisterForm = () => {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-    company_name: "",
-    address: "",
-    phone: "",
-    role: "vendor", // Default role
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    console.log("Changing:", e.target.name, e.target.value); // Add this
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-
+  async function onSubmit(values) {
     try {
-      const response = await registerVendor(form);
-      const { token, user, vendor } = response.data;
+      const response = await registerService(values);
 
-      // Now store them correctly
-      setAuthToken(token);
-      setUserData({ user, vendor });
+      setAuthToken(response.token);
+      setUserData(response.user);
 
       navigate("/");
-    } catch (err) {
-      setError(err.message || "Registration failed. Please try again.");
-      console.error("Registration error:", err);
-    } finally {
-      setIsSubmitting(false);
+    } catch (error) {
+      console.error("Registration failed:", error);
+      form.setError("email", {
+        type: "manual",
+        message: "An error occurred during registration. Please try again.",
+      });
     }
-  };
-
-  const vendorIcon = (
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-    />
-  );
+  }
 
   return (
-    <AuthFormContainer
-      title="Vendor Registration"
-      subtitle="Create your vendor account"
-      icon={<AuthIcon icon={vendorIcon} />}
-    >
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+      {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
+      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen">
+        <img src={brand} alt="brand" className="w-full h-full object-cover" />
+      </div>
+
+      {/* Form Container */}
+      <div className="relative w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
+        <div className="absolute top-9 right-9 z-10">
+          <Link to="/login">
+            <Button variant="secondary">Log in</Button>
+          </Link>
         </div>
-      )}
+        <div className="w-full max-w-[400px]">
+          {/* Form */}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+              <h2 className="text-2xl font-bold mb-6">Create Account</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <AuthInputField
-            label="Full Name"
-            name="name"
-            placeholder="John Doe"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="border-gray-200 rounded-md h-9"
+                        type="text"
+                        placeholder="Your Name"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <AuthInputField
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="your@email.com"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="border-gray-200 rounded-md h-9"
+                        type="email"
+                        placeholder="name@example.com"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="border-gray-200 rounded-md h-9"
+                        type="password"
+                        placeholder="Password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password_confirmation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="border-gray-200 rounded-md h-9"
+                        type="password"
+                        placeholder="Re-enter password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                className="w-full mt-2 h-10 bg-[#142946] text-white"
+                type="submit"
+              >
+                Register
+              </Button>
+            </form>
+          </Form>
+
+          {/* Footer */}
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p>By clicking continue, you agree to our</p>
+            <p>
+              <a href="#" className="font-medium underline">
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="#" className="font-medium underline">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
         </div>
-
-        <AuthInputField
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          value={form.password}
-          onChange={handleChange}
-          required
-          minLength="8"
-        />
-
-        <AuthInputField
-          label="Confirm Password"
-          name="password_confirmation"
-          type="password"
-          placeholder="••••••••"
-          value={form.password_confirmation}
-          onChange={handleChange}
-          required
-          minLength="8"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <AuthInputField
-            label="Company Name"
-            name="company_name"
-            placeholder="Your Company LLC"
-            value={form.company_name}
-            onChange={handleChange}
-            required
-          />
-
-          <AuthInputField
-            label="Phone Number"
-            name="phone"
-            placeholder="+1 (555) 123-4567"
-            value={form.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <AuthInputField
-          label="Company Address"
-          name="address"
-          placeholder="123 Business St, City, Country"
-          value={form.address}
-          onChange={handleChange}
-          required
-        />
-
-        <div className="pt-2">
-          <AuthSubmitButton isSubmitting={isSubmitting}>
-            Register as Vendor
-          </AuthSubmitButton>
-        </div>
-
-        <AuthFooter
-          text="Already have an account?"
-          linkText="Sign in"
-          linkUrl="/login"
-        />
-      </form>
-    </AuthFormContainer>
+      </div>
+    </div>
   );
 };
 

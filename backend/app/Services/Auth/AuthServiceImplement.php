@@ -6,7 +6,6 @@ use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Helpers\ResponseHelpers;
 use App\Repositories\User\UserRepository;
-use App\Repositories\Vendor\VendorRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -22,10 +21,9 @@ class AuthServiceImplement extends Service implements AuthService
     protected $mainRepository;
     protected $vendorRepository;
 
-    public function __construct(UserRepository $mainRepository, VendorRepository $vendorRepository)
+    public function __construct(UserRepository $mainRepository)
     {
         $this->mainRepository = $mainRepository;
-        $this->vendorRepository = $vendorRepository;
     }
 
     public function LoginServices($request)
@@ -52,12 +50,7 @@ class AuthServiceImplement extends Service implements AuthService
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'role' => $user->role
                 ],
-                'vendor' => $user->role === 'vendor' ? [
-                    'id' => $user->vendor->id,
-                    'status' => $user->vendor->status
-                ] : null
             ], 200);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
@@ -76,17 +69,8 @@ class AuthServiceImplement extends Service implements AuthService
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $hashedPassword,
-                'role' => $request->role ?? 'vendor',
             ]);
-
-            // Vendor
-            $vendor = $this->vendorRepository->create([
-                'user_id' => $user->id,
-                'company_name' => $request->company_name,
-                'address' => $request->address,
-                'phone' => $request->phone,
-                'status' => 'pending',
-            ]);
+            // dd($user);
 
             DB::commit();
 
@@ -98,15 +82,7 @@ class AuthServiceImplement extends Service implements AuthService
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'role' => $user->role,
                 ],
-                'vendor' => [
-                    'id' => $vendor->id,
-                    'company_name' => $vendor->company_name,
-                    'address' => $vendor->address,
-                    'phone' => $vendor->phone,
-                    'status' => $vendor->status,
-                ]
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();

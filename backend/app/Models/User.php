@@ -20,7 +20,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
     ];
 
     /**
@@ -42,9 +41,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',  // Ensure password is hashed correctly
     ];
-
-    public function vendor()
-    {
-        return $this->hasOne(Vendor::class);
-    }
 }

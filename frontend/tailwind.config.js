@@ -1,11 +1,20 @@
 export default {
-  darkMode: 'class',
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  files: [
+    "./index.html",
+    "./src/**/*.{js,jsx}",
+    "./src/components/**/*.{js,jsx}",
+  ],
   theme: {
-    fontFamily: {
-      sans: ['Open Sans', 'sans-serif'],
+    extend: {
+      colors: {
+        sidebar: "#ffffff",
+        "sidebar-foreground": "#000000",
+        "sidebar-accent": "#f0f0f0",
+        "sidebar-accent-foreground": "#000000",
+        "sidebar-border": "#e5e7eb",
+        "sidebar-ring": "#d1d5db",
+      },
     },
-    extend: {},
   },
   plugins: [],
-}
+};
