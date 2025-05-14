@@ -3,9 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Link, useNavigate } from "react-router-dom";
-import { register as registerService } from "../../services/authService";
+import { register as registerService } from "@/services/authService";
 import { setAuthToken, setUserData } from "@/lib/auth";
-import brand from "../../assets/images/brand.png";
+import brand from "@/assets/images/brand1.webp";
+import logo from "@/assets/images/logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,7 +61,7 @@ const RegisterForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-white flex lg:flex-row">
       {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
       <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen">
         <img src={brand} alt="brand" className="w-full h-full object-cover" />
@@ -68,16 +69,23 @@ const RegisterForm = () => {
 
       {/* Form Container */}
       <div className="relative w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
-        <div className="absolute top-9 right-9 z-10">
+        <div className="absolute top-6 left-6 z-10 block lg:hidden">
+          <img src={logo} alt="Logo" className="w-35" />
+        </div>
+
+        <div className="absolute top-6 right-6 z-10">
           <Link to="/login">
-            <Button variant="secondary">Log in</Button>
+            <Button variant="secondary">Login</Button>
           </Link>
         </div>
+
         <div className="w-full max-w-[400px]">
           {/* Form */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <h2 className="text-2xl font-bold mb-6">Create Account</h2>
+              <h2 className="text-2xl font-bold mb-10 sm:mb-6 text-center sm:text-left">
+                Create Account
+              </h2>
 
               <FormField
                 control={form.control}

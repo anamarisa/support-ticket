@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { courses } from "@/data/course"; // or wherever your courses array is
+import { courses } from "@/data/course";
 import star from "@/assets/icons/star.svg";
 import user from "@/assets/icons/user.svg";
 import { ChevronLeft } from "lucide-react";

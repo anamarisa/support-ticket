@@ -3,9 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { useNavigate } from "react-router";
-import { setAuthToken, setUserData } from "../../lib/auth";
-import { login as loginService } from "../../services/authService";
-import brand2 from "../../assets/images/brand1.png";
+import { setAuthToken, setUserData } from "@/lib/auth";
+import { login as loginService } from "@/services/authService";
+import brand2 from "@/assets/images/brand2.webp";
+import logo from "@/assets/images/logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +38,7 @@ const Login = () => {
 
   async function onSubmit(values) {
     try {
-      const response = await loginService(values); // Call your API
+      const response = await loginService(values);
       setAuthToken(response.token);
       setUserData(response.user);
       navigate("/"); // redirect after login
@@ -51,21 +52,26 @@ const Login = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-white flex flex-col lg:flex-row">
-      <div className="absolute top-9 right-9 z-10">
+    <div className="min-h-screen bg-white flex lg:flex-row items-center justify-center">
+      <div className="absolute top-6 left-6 z-10 block lg:hidden">
+        <img src={logo} alt="Logo" className="w-35" />
+      </div>
+
+      <div className="absolute top-6 right-6 z-10">
         <Link to="/register">
           <Button variant="secondary">Sign up</Button>
         </Link>
       </div>
+
       {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
       <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen">
         <img src={brand2} alt="brand" className="w-full h-full object-cover" />
       </div>
 
       {/* Form Container */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
         <div className="w-full max-w-[400px]">
-          {/* Form */}
+          {/* Form */}{" "}
           <div className="space-y-6">
             <div className="space-y-2">
               <Form {...form}>
@@ -73,7 +79,7 @@ const Login = () => {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-2"
                 >
-                  <h2 className="text-2xl font-bold mb-6">
+                  <h2 className="text-2xl font-bold mb-10 sm:mb-6 text-center sm:text-left">
                     Login to Leadsensei
                   </h2>
 
@@ -123,7 +129,6 @@ const Login = () => {
               </Form>
             </div>
           </div>
-
           {/* Footer */}
           <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>By clicking continue, you agree to our</p>

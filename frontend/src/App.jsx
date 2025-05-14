@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
@@ -13,26 +12,19 @@ import { courses } from "./data/course";
 function App() {
   return (
     <BrowserRouter>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-        }}
-      />
-
       <Routes>
         {/* Public routes */}
         <Route element={<PublicRoute restricted />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
-        <Route path="/" element={<Dashboard />}>
-          <Route index element={<CoursePage courses={courses} />} />
-          <Route path="course/:id" element={<CourseDetail />} />
+
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />}>
+            <Route index element={<CoursePage courses={courses} />} />
+            <Route path="course/:id" element={<CourseDetail />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

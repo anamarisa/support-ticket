@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getUserData } from "../../lib/auth";
+import { getUserData } from "@/lib/auth";
 
 const ProtectedRoute = ({ allowedRoles, requireApproval = false }) => {
   const userData = getUserData();

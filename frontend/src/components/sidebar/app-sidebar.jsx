@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
 import { getUserData } from "@/lib/auth";
 import { useLocation } from "react-router-dom";
 
@@ -61,7 +60,7 @@ export function AppSidebar({ ...props }) {
       setUser({
         name: storedUser.name,
         email: storedUser.email,
-        avatar: storedUser.avatar ?? "/avatars/shadcn.jpg",
+        avatar: storedUser.avatar ?? "https://github.com/shadcn.png",
       });
     }
   }, []);
