@@ -64,8 +64,11 @@ const Login = () => {
       </div>
 
       {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
-      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen">
+      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen relative">
         <img src={brand2} alt="brand" className="w-full h-full object-cover" />
+        <div className="absolute top-6 left-6 z-10">
+          <img src={logo} alt="logo" className="w-70"></img>
+        </div>
       </div>
 
       {/* Form Container */}
