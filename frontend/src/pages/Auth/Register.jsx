@@ -1,12 +1,9 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { Link, useNavigate } from "react-router-dom";
 import { register as registerService } from "@/services/authService";
 import { setAuthToken, setUserData } from "@/lib/auth";
-import brand from "@/assets/images/brand1.webp";
-import logo from "@/assets/images/logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +11,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
@@ -28,6 +26,9 @@ const formSchema = z.object({
   password_confirmation: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
+}).refine(data => data.password === data.password_confirmation, {
+  message: "Passwords don't match",
+  path: ["password_confirmation"],
 });
 
 const RegisterForm = () => {
@@ -46,11 +47,18 @@ const RegisterForm = () => {
   async function onSubmit(values) {
     try {
       const response = await registerService(values);
-
       setAuthToken(response.token);
       setUserData(response.user);
+      
+      const role = response.user?.role;
 
-      navigate("/");
+      if (role === "customer") {
+        navigate("/dashboard-customer");
+      } else if (role === "agent") {
+        navigate("/dashboard-agent");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       form.setError("email", {
@@ -61,49 +69,31 @@ const RegisterForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex lg:flex-row">
-      {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
-      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen relative">
-        <img src={brand} alt="brand" className="w-full h-full object-cover" />
-        <div className="absolute top-6 left-6 z-10">
-          <img src={logo} alt="logo" className="w-70"></img>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="p-8 sm:p-10">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Create an account</h1>
+            <p className="mt-2 text-gray-600">Get started with our platform</p>
+          </div>
 
-      {/* Form Container */}
-      <div className="relative w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
-        <div className="absolute top-6 left-6 z-10 block lg:hidden">
-          <img src={logo} alt="Logo" className="w-35" />
-        </div>
-
-        <div className="absolute top-6 right-6 z-10">
-          <Link to="/login">
-            <Button variant="secondary">Login</Button>
-          </Link>
-        </div>
-
-        <div className="w-full max-w-[400px]">
-          {/* Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <h2 className="text-2xl font-bold mb-10 sm:mb-6 text-center sm:text-left">
-                Create Account
-              </h2>
-
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel className="text-gray-700">Full Name</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="border-gray-200 rounded-md h-9"
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         type="text"
-                        placeholder="Your Name"
+                        placeholder="John Doe"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-sm" />
                   </FormItem>
                 )}
               />
@@ -113,15 +103,16 @@ const RegisterForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel className="text-gray-700">Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="border-gray-200 rounded-md h-9"
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         type="email"
                         placeholder="name@example.com"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-sm" />
                   </FormItem>
                 )}
               />
@@ -131,15 +122,16 @@ const RegisterForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel className="text-gray-700">Password</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="border-gray-200 rounded-md h-9"
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         type="password"
-                        placeholder="Password"
+                        placeholder="••••••••"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-sm" />
                   </FormItem>
                 )}
               />
@@ -149,39 +141,35 @@ const RegisterForm = () => {
                 name="password_confirmation"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel className="text-gray-700">Confirm Password</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="border-gray-200 rounded-md h-9"
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         type="password"
-                        placeholder="Re-enter password"
+                        placeholder="••••••••"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-sm" />
                   </FormItem>
                 )}
               />
 
               <Button
-                className="w-full mt-2 h-10 bg-[#142946] text-white"
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
                 type="submit"
               >
-                Register
+                Create Account
               </Button>
             </form>
           </Form>
 
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>By clicking continue, you agree to our</p>
+          <div className="mt-6 text-center text-sm text-gray-500">
             <p>
-              <a href="#" className="font-medium underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="font-medium underline">
-                Privacy Policy
-              </a>
+              Already have an account?{" "}
+              <Link to="/login" className="font-medium text-blue-600 hover:text-blue-800">
+                Sign in
+              </Link>
             </p>
           </div>
         </div>

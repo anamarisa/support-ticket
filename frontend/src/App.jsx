@@ -1,29 +1,41 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/auth/login";
-import Register from "./pages/auth/register";
-import Dashboard from "./components/dashboard/dashboard";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import PublicRoute from "./components/routes/PublicRoute";
-import CourseDetail from "./pages/course-detail";
-import CoursePage from "./pages/course-page";
-import { courses } from "./data/course";
+import Login from "./pages/Auth/login";
+import Register from "./pages/Auth/register";
+import Dashboard from "./components/dashboard/dashboard";
+import Tickets from "./pages/tickets";
+import TicketsPage from "./pages/ticket-page";
+import AllTicket from "./pages/all-ticket";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Public routes */}
         <Route element={<PublicRoute restricted />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
-        {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />}>
-            <Route index element={<CoursePage courses={courses} />} />
-            <Route path="course/:id" element={<CourseDetail />} />
+          <Route
+            path="/dashboard-customer"
+            element={<Dashboard userRole="customer" />}
+          >
+            <Route index element={<TicketsPage />} />
+            <Route path="create-ticket" element={<Tickets />} />
+          </Route>
+
+          <Route
+            path="/dashboard-agent"
+            element={<Dashboard userRole="agent" />}
+          >
+            {/* Agent specific routes or same nested routes if any */}
+            <Route index element={<AllTicket />} />
           </Route>
         </Route>
       </Routes>

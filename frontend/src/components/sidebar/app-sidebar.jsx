@@ -18,21 +18,25 @@ import {
 const data = {
   teams: [
     {
-      name: "Lead Sensei",
+      name: "Support Ticket",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
   ],
   navMain: [
     {
-      title: "Course Library ",
+      title: "Tickets",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "Video Course",
-          url: "/",
+          title: "All Ticket",
+          url: "/dashboard-customer",
+        },
+        {
+          title: "Create Ticket",
+          url: "/dashboard-customer/create-ticket",
         },
       ],
     },

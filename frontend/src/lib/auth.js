@@ -19,10 +19,9 @@ export function getUserData() {
   return data ? JSON.parse(data) : null;
 }
 
-// utils/auth.js
 export const refreshUserData = async () => {
   try {
-    const response = await api.get('/auth/me'); // Adjust endpoint as needed
+    const response = await api.get('/auth/me');
     const freshData = response.data;
     localStorage.setItem('userData', JSON.stringify(freshData));
     return freshData;
@@ -42,7 +41,8 @@ export function isAuthenticated() {
 
 export function getUserRole() {
   const userData = getUserData();
-  return userData?.user?.role || null;
+  // return userData?.role || null;
+  return userData?.role || userData?.user?.role || null;
 }
 
 export function hasRole(role) {

@@ -1,12 +1,9 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { useNavigate } from "react-router";
 import { setAuthToken, setUserData } from "@/lib/auth";
 import { login as loginService } from "@/services/authService";
-import brand2 from "@/assets/images/brand2.webp";
-import logo from "@/assets/images/logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +11,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Link } from "react-router-dom";
@@ -41,7 +39,16 @@ const Login = () => {
       const response = await loginService(values);
       setAuthToken(response.token);
       setUserData(response.user);
-      navigate("/"); // redirect after login
+
+      const role = response.user?.role;
+
+      if (role === "customer") {
+        navigate("/dashboard-customer");
+      } else if (role === "agent") {
+        navigate("/dashboard-agent");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login failed:", error);
       form.setError("email", {
@@ -52,97 +59,74 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex lg:flex-row items-center justify-center">
-      <div className="absolute top-6 left-6 z-10 block lg:hidden">
-        <img src={logo} alt="Logo" className="w-35" />
-      </div>
-
-      <div className="absolute top-6 right-6 z-10">
-        <Link to="/register">
-          <Button variant="secondary">Sign up</Button>
-        </Link>
-      </div>
-
-      {/* Brand Image - Hidden on mobile, shown on desktop with max-width and flexible height */}
-      <div className="hidden sm:hidden lg:flex lg:w-3/4 h-screen relative">
-        <img src={brand2} alt="brand" className="w-full h-full object-cover" />
-        <div className="absolute top-6 left-6 z-10">
-          <img src={logo} alt="logo" className="w-70"></img>
-        </div>
-      </div>
-
-      {/* Form Container */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8">
-        <div className="w-full max-w-[400px]">
-          {/* Form */}{" "}
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-2"
-                >
-                  <h2 className="text-2xl font-bold mb-10 sm:mb-6 text-center sm:text-left">
-                    Login to Leadsensei
-                  </h2>
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="border-gray-200 rounded-md h-9"
-                            type="email"
-                            placeholder="name@example.com"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="border-gray-200 rounded-md h-9"
-                            type="password"
-                            placeholder="Password"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
-                    className="w-full mt-2 h-10 bg-[#142946] text-white"
-                    type="submit"
-                  >
-                    Sign In
-                  </Button>
-                </form>
-              </Form>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="p-8 sm:p-10">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
+            <p className="mt-2 text-gray-600">Sign in to your account</p>
           </div>
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>By clicking continue, you agree to our</p>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        type="email"
+                        placeholder="name@example.com"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500 text-sm" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between items-center">
+                      <FormLabel className="text-gray-700">Password</FormLabel>
+                      <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
+                        Forgot password?
+                      </a>
+                    </div>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="h-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        type="password"
+                        placeholder="••••••••"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500 text-sm" />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+                type="submit"
+              >
+                Sign In
+              </Button>
+            </form>
+          </Form>
+
+          <div className="mt-6 text-center text-sm text-gray-500">
             <p>
-              <a href="#" className="font-medium underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="font-medium underline">
-                Privacy Policy
-              </a>
+              Don't have an account?{" "}
+              <Link to="/register" className="font-medium text-blue-600 hover:text-blue-800">
+                Sign up
+              </Link>
             </p>
           </div>
         </div>
