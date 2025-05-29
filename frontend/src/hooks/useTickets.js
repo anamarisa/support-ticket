@@ -10,7 +10,7 @@ export function useTickets() {
     queryKey: ["tickets", user?.id],
     queryFn: fetchTickets,
     enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
     retry: 1,
   });
 }
