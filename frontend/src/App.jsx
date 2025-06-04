@@ -13,8 +13,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-
         {/* Public routes */}
         <Route element={<PublicRoute restricted />}>
           <Route path="/login" element={<Login />} />
